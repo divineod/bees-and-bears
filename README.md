@@ -78,22 +78,22 @@ Bees & Bears is a digital lending platform API designed for solar panel installe
 
 ### Scalability
 
-1**Database Connection Pooling**
+1. **Database Connection Pooling**
    - `CONN_MAX_AGE=60` keeps connections alive
    - Reduces connection overhead
    - Efficient resource utilization
 
-2**Strategic Database Indexing**
+2. **Strategic Database Indexing**
    - Indexed fields: email, created_at, status, foreign keys
    - Composite indexes for common query patterns
    - B-tree indexes for range queries
 
-3**Optimized Query Patterns**
+3. **Optimized Query Patterns**
    - `select_related()` for foreign key relationships
    - Pagination for large datasets (100 items per page)
    - Read-only serializers for list views
 
-4**Stateless Authentication**
+4. **Stateless Authentication**
    - JWT tokens eliminate session storage
    - No server-side session state
    - Horizontal scaling without sticky sessions
@@ -473,61 +473,6 @@ def test_create_customer_success(self, authenticated_client, user):
     # Assert
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["email"] == "john.doe@example.com"
-```
-
-## Database Schema
-
-### User Model (Custom)
-
-```python
-- id: BigAutoField (Primary Key)
-- username: CharField(150, Unique)
-- email: EmailField(Unique)
-- password: CharField(128) [Hashed]
-- role: CharField(20) [INSTALLER, CUSTOMER]
-- is_active: BooleanField
-- is_staff: BooleanField
-- date_joined: DateTimeField
-- last_login: DateTimeField
-
-# Computed Properties:
-- is_installer: Returns True if role == INSTALLER
-- is_customer: Returns True if role == CUSTOMER
-```
-
-### Customer Model
-
-```python
-- id: BigAutoField (Primary Key)
-- first_name: CharField(100)
-- last_name: CharField(100)
-- email: EmailField (Unique, Indexed)
-- phone_number: CharField(20)
-- address_line1: CharField(255)
-- address_line2: CharField(255)
-- city: CharField(100)
-- state: CharField(100)
-- postal_code: CharField(20)
-- country: CharField(100)
-- user: OneToOneField(User) [Optional - for customer portal access]
-- created_by: ForeignKey(User) [The installer who created this record]
-- created_at: DateTimeField (Indexed)
-- updated_at: DateTimeField
-```
-
-### LoanOffer Model
-
-```python
-- id: BigAutoField (Primary Key)
-- customer: ForeignKey(Customer, Indexed)
-- loan_amount: DecimalField(12, 2)
-- interest_rate: DecimalField(5, 2)
-- loan_term: IntegerField
-- monthly_payment: DecimalField(12, 2) [Calculated]
-- status: CharField(20, Indexed)
-- created_by: ForeignKey(User)
-- created_at: DateTimeField (Indexed)
-- updated_at: DateTimeField
 ```
 
 ### Indexes
